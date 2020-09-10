@@ -1,4 +1,6 @@
 import { Game } from './game.js';
+import {GameJSONSerializer} from "./game-json-serializer.js";
+import {GameJSONDeserializer} from "./game-json-deserializer.js"
 let game;
 function updateUI() {
     let holder = document.getElementById("board-holder");
@@ -77,7 +79,18 @@ window.addEventListener("DOMContentLoaded", e => {
             let col = Number.parseInt(id[id.length-1]);
             game.playInColumn(col);
             updateUI();
+            let serializer = new GameJSONSerializer(game);
+            //debugger;
+            localStorage.setItem("savedGame", serializer.serialize());
         }
 
     });
+    let savedGame = localStorage.getItem("savedGame");
+    console.log(savedGame);
+    if(savedGame){
+        let stored = new GameJSONDeserializer(`${savedGame}`);
+        game = stored.deserialize();
+        console.log(game);
+        updateUI();
+    }
 });
